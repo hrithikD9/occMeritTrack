@@ -18,19 +18,37 @@ export const calculateAverage = (marks) => {
 };
 
 // Helper function to rank candidates based on final percentage
+// Students with the same percentage get the same rank
 export const rankCandidates = (candidates) => {
-  return candidates
+  // First, calculate percentages and sort
+  const candidatesWithPercentage = candidates
     .map((candidate) => ({
       ...candidate,
       finalPercentage: parseFloat(calculateFinalPercentage(candidate.tests || [])),
       // Keep old structure for backward compatibility
       average: candidate.marks ? parseFloat(calculateAverage(candidate.marks)) : 0
     }))
-    .sort((a, b) => b.finalPercentage - a.finalPercentage)
-    .map((candidate, index) => ({
-      ...candidate,
-      rank: index + 1
-    }));
+    .sort((a, b) => b.finalPercentage - a.finalPercentage);
+  
+  // Assign ranks with tie handling
+  let currentRank = 1;
+  return candidatesWithPercentage.map((candidate, index) => {
+    // If this is not the first candidate and the percentage matches the previous one
+    if (index > 0 && candidatesWithPercentage[index - 1].finalPercentage === candidate.finalPercentage) {
+      // Same rank as previous candidate
+      return {
+        ...candidate,
+        rank: candidatesWithPercentage[index - 1].rank
+      };
+    } else {
+      // New rank (could skip numbers if there were ties before)
+      currentRank = index + 1;
+      return {
+        ...candidate,
+        rank: currentRank
+      };
+    }
+  });
 };
 
 // Helper function to determine performance status

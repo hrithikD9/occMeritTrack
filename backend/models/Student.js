@@ -80,18 +80,36 @@ studentSchema.methods.calculateFinalPercentage = function() {
 };
 
 // Static method to recalculate all ranks
+// Students with the same finalPercentage get the same rank
 studentSchema.statics.recalculateRanks = async function() {
   try {
-    // Get all students sorted by finalPercentage descending
+    // Get all students sorted by finalPercentage descending, then by name
     const students = await this.find().sort({ finalPercentage: -1, name: 1 });
 
-    // Assign ranks
-    const bulkOps = students.map((student, index) => ({
-      updateOne: {
-        filter: { _id: student._id },
-        update: { rank: index + 1 }
+    // Assign ranks with tie handling
+    const bulkOps = [];
+    let currentRank = 1;
+    
+    students.forEach((student, index) => {
+      let assignedRank;
+      
+      // If this is not the first student and the percentage matches the previous one
+      if (index > 0 && students[index - 1].finalPercentage === student.finalPercentage) {
+        // Same rank as previous student
+        assignedRank = bulkOps[index - 1].updateOne.update.rank;
+      } else {
+        // New rank (could skip numbers if there were ties before)
+        currentRank = index + 1;
+        assignedRank = currentRank;
       }
-    }));
+      
+      bulkOps.push({
+        updateOne: {
+          filter: { _id: student._id },
+          update: { rank: assignedRank }
+        }
+      });
+    });
 
     // Execute bulk update
     if (bulkOps.length > 0) {

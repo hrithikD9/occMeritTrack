@@ -180,5 +180,13 @@ typings/
 *.seed
 *.pid.lock
 
+# ============================================
+# Production & Deployment
+# ============================================
+.vercel
+.render
+.env.production.local
+.env.local
+
 # Optional
 nul

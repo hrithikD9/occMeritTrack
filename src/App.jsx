@@ -270,37 +270,39 @@ function App() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-900 via-purple-900 to-gray-900">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Header */}
-        <header className="text-center mb-8">
-          <div className="flex justify-between items-start mb-6">
-            <div className="flex-1"></div>
+        <header className="text-center mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4 sm:mb-6">
+            <div className="hidden sm:block sm:flex-1"></div>
             <div className="flex-1 flex justify-center">
-              <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-400">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-400">
                 🎓 OCC MeritTrack
               </h1>
             </div>
-            <div className="flex-1 flex justify-end gap-3">
-              <div className={`px-5 py-2.5 rounded-xl text-sm font-semibold shadow-lg backdrop-blur-sm ${
+            <div className="flex sm:flex-1 justify-center sm:justify-end gap-2 sm:gap-3">
+              <div className={`px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold shadow-lg backdrop-blur-sm ${
                 userRole === 'teacher' 
                   ? 'bg-purple-600/90 text-white border border-purple-400/30' 
                   : 'bg-emerald-600/90 text-white border border-emerald-400/30'
               }`}>
-                {userRole === 'teacher' ? '👨‍🏫 Teacher' : '👨‍🎓 Student'}
+                <span className="hidden sm:inline">{userRole === 'teacher' ? '👨‍🏫 Teacher' : '👨‍🎓 Student'}</span>
+                <span className="sm:hidden">{userRole === 'teacher' ? '👨‍🏫' : '👨‍🎓'}</span>
               </div>
               <button
                 onClick={handleLogout}
-                className="px-5 py-2.5 bg-red-600/90 hover:bg-red-500 text-white rounded-xl text-sm font-semibold transition-all duration-300 shadow-lg backdrop-blur-sm border border-red-400/30"
+                className="px-3 sm:px-5 py-2 sm:py-2.5 bg-red-600/90 hover:bg-red-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 shadow-lg backdrop-blur-sm border border-red-400/30"
                 title="Logout"
               >
-                🚪 Logout
+                <span className="hidden sm:inline">🚪 Logout</span>
+                <span className="sm:hidden">🚪</span>
               </button>
             </div>
           </div>
-          <p className="text-purple-200 text-lg font-medium">
+          <p className="text-purple-200 text-sm sm:text-base lg:text-lg font-medium px-2">
             HSC Candidate Performance Evaluation System
           </p>
-          <div className="mt-5 flex justify-center gap-8 text-sm">
+          <div className="mt-3 sm:mt-5 flex flex-col sm:flex-row justify-center gap-2 sm:gap-8 text-xs sm:text-sm">
             <span className="text-gray-300">📊 Total Candidates: <strong className="text-purple-400">{candidates.length}</strong></span>
             <span className="text-gray-300">📝 Total Tests: <strong className="text-purple-400">{testNumbers.length}</strong></span>
           </div>
@@ -308,13 +310,13 @@ function App() {
 
         {/* Student Mode Notice */}
         {userRole === 'student' && (
-          <div className="mb-6 bg-purple-900/40 border-l-4 border-purple-400 p-5 rounded-xl backdrop-blur-sm shadow-xl">
-            <div className="flex items-center">
+          <div className="mb-4 sm:mb-6 bg-purple-900/40 border-l-4 border-purple-400 p-3 sm:p-5 rounded-lg sm:rounded-xl backdrop-blur-sm shadow-xl">
+            <div className="flex items-start gap-3">
               <div className="shrink-0">
-                <span className="text-3xl">👁️</span>
+                <span className="text-2xl sm:text-3xl">👁️</span>
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-purple-200">
+              <div>
+                <p className="text-xs sm:text-sm font-medium text-purple-200">
                   <strong className="text-purple-300">Read-Only Mode:</strong> You're viewing as a student. You can view rankings, charts, and export data, but cannot add, edit, or delete marks.
                 </p>
               </div>
@@ -324,19 +326,19 @@ function App() {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 bg-red-900/40 border-l-4 border-red-400 p-5 rounded-xl backdrop-blur-sm shadow-xl">
-            <div className="flex items-center">
+          <div className="mb-4 sm:mb-6 bg-red-900/40 border-l-4 border-red-400 p-3 sm:p-5 rounded-lg sm:rounded-xl backdrop-blur-sm shadow-xl">
+            <div className="flex items-start gap-3">
               <div className="shrink-0">
-                <span className="text-3xl">⚠️</span>
+                <span className="text-2xl sm:text-3xl">⚠️</span>
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-red-200">
+              <div className="flex-1">
+                <p className="text-xs sm:text-sm font-medium text-red-200">
                   <strong className="text-red-300">Error:</strong> {error}
                 </p>
               </div>
               <button
                 onClick={() => setError(null)}
-                className="ml-auto text-red-200 hover:text-white"
+                className="text-red-200 hover:text-white text-xl"
               >
                 ✕
               </button>
@@ -391,7 +393,7 @@ function App() {
         )}
 
         {/* Footer */}
-        <footer className="mt-12 text-center text-gray-400 text-sm">
+        <footer className="mt-8 sm:mt-12 text-center text-gray-400 text-xs sm:text-sm px-2">
           <p className="text-purple-300 font-medium italic">
             "There are 10 types of people in the world: those who understand binary and those who don't."
           </p>

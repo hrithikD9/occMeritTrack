@@ -180,12 +180,12 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
   };
 
   return (
-    <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-6 mb-6 border border-purple-500/20">
-      <h2 className="text-2xl font-bold text-purple-300 mb-6">Add Test Result</h2>
+    <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-4 sm:p-6 mb-4 sm:mb-6 border border-purple-500/20">
+      <h2 className="text-xl sm:text-2xl font-bold text-purple-300 mb-4 sm:mb-6">Add Test Result</h2>
       
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
         <div className="relative">
-          <label className="block text-sm font-medium text-purple-200 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-purple-200 mb-2">
             Candidate Name
           </label>
           <input
@@ -196,7 +196,7 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
             onFocus={() => name.trim().length > 0 && setShowDropdown(true)}
             placeholder="Start typing student name..."
             autoComplete="off"
-            className="w-full px-4 py-3 bg-gray-900/50 border border-purple-500/30 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-900/50 border border-purple-500/30 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 text-sm sm:text-base"
           />
           
           {/* Autocomplete Dropdown */}
@@ -262,7 +262,7 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-purple-200 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-purple-200 mb-2">
             Test Number
           </label>
           <input
@@ -272,7 +272,7 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
             placeholder="Enter test number (e.g., 1, 2, 3...)"
             min="1"
             step="1"
-            className="w-full px-4 py-3 bg-gray-900/50 border border-purple-500/30 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-900/50 border border-purple-500/30 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 text-sm sm:text-base"
           />
           {testNumber && name.trim() && (() => {
             const currentStudent = findExactMatch(name);
@@ -307,7 +307,7 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-purple-200 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-purple-200 mb-2">
             Total Marks
           </label>
           <input
@@ -317,12 +317,12 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
             placeholder="Enter total marks (e.g., 25, 50, 100)"
             min="1"
             step="0.01"
-            className="w-full px-4 py-3 bg-gray-900/50 border border-purple-500/30 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-900/50 border border-purple-500/30 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 text-sm sm:text-base"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-purple-200 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-purple-200 mb-2">
             Obtained Marks
           </label>
           <input
@@ -332,20 +332,20 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
             placeholder="Enter obtained marks"
             min="0"
             step="0.01"
-            className="w-full px-4 py-3 bg-gray-900/50 border border-purple-500/30 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-900/50 border border-purple-500/30 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 text-sm sm:text-base"
           />
         </div>
         
         {totalMarks && obtainedMarks && !isNaN(totalMarks) && !isNaN(obtainedMarks) && parseFloat(totalMarks) > 0 && (
-          <div className="bg-purple-900/30 border border-purple-500/30 rounded-xl p-3">
-            <p className="text-sm text-purple-200">
+          <div className="bg-purple-900/30 border border-purple-500/30 rounded-xl p-2 sm:p-3">
+            <p className="text-xs sm:text-sm text-purple-200">
               📊 <strong className="text-purple-300">Percentage:</strong> {((parseFloat(obtainedMarks) / parseFloat(totalMarks)) * 100).toFixed(2)}%
             </p>
           </div>
         )}
         
         {error && (
-          <div className="bg-red-900/40 border border-red-500/50 text-red-200 px-4 py-3 rounded-xl backdrop-blur-sm">
+          <div className="bg-red-900/40 border border-red-500/50 text-red-200 px-3 sm:px-4 py-2 sm:py-3 rounded-xl backdrop-blur-sm text-xs sm:text-sm">
             {error}
           </div>
         )}
@@ -353,7 +353,7 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2.5 sm:py-3 px-4 rounded-xl transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
         >
           {isSubmitting 
             ? '⏳ Saving...' 
@@ -362,8 +362,8 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
         </button>
       </form>
       
-      <div className="mt-4 p-4 bg-purple-900/30 rounded-xl border border-purple-500/20">
-        <p className="text-sm text-purple-200">
+      <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-purple-900/30 rounded-xl border border-purple-500/20">
+        <p className="text-xs sm:text-sm text-purple-200">
           💡 <strong className="text-purple-300">Tip:</strong> Each student can have their own Test 1, 2, 3, etc. Multiple students can submit results for the same test number. A student cannot submit the same test twice.
         </p>
       </div>

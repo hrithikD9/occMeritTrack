@@ -2,34 +2,36 @@
 
 **Full-Stack HSC Candidate Performance Evaluation & Ranking System**
 
-A modern web application for tracking and evaluating HSC candidate performance across multiple tests with automatic rank calculation, role-based access control, and real-time cloud synchronization.
+A modern web application for tracking and evaluating HSC candidate performance across multiple tests with sophisticated automatic ranking, role-based access control, and real-time cloud synchronization.
 
 ![React](https://img.shields.io/badge/React-18.3-blue) ![Node.js](https://img.shields.io/badge/Node.js-18+-green) ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-brightgreen) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC)
 
 ## ✨ Features
 
 ### 📊 Core Functionality
-- **Automatic Ranking System** - Weighted percentage calculation: `(Σ obtained / Σ total) × 100`
-- **Real-time Rank Updates** - Ranks recalculated automatically after any data change using MongoDB hooks
-- **Multi-Test Support** - Track performance across multiple independent test numbers
-- **Performance Analytics** - Individual student performance charts and progress tracking
+- **Sophisticated Ranking System** - Multi-level tie-breaking logic with percentage, test count, and total marks comparison
+- **Weighted Percentage Calculation** - Fair assessment: `(Σ obtained / Σ total) × 100`
+- **Real-time Rank Updates** - Automatic recalculation after any data change using MongoDB hooks
+- **Manual Rank Recalculation** - Teacher-only button to refresh all rankings on demand
+- **Multi-Test Support** - Track performance across unlimited independent test numbers
+- **Performance Analytics** - Individual student performance charts and progress visualization
 - **Test Filtering** - View rankings for specific tests or overall performance
-- **CSV Export** - Export student data for offline analysis and sharing
+- **CSV Export** - Export complete student data for offline analysis
 
 ### 🔐 Authentication & Security
-- **JWT Authentication** - Secure teacher access with Bearer token
+- **JWT Authentication** - Secure token-based authentication for teachers
 - **Role-Based Access Control** - Teacher (full CRUD) and Student (read-only) modes
-- **Protected API Routes** - Middleware-based authentication for sensitive operations
-- **Passkey System** - Teacher passkey: `OCC2026`
-- **Cloud Database** - MongoDB Atlas for secure, scalable data storage
+- **Protected API Routes** - Middleware-based route protection
+- **Passkey System** - Configurable teacher authentication
+- **Cloud Database** - MongoDB Atlas with secure connection and IP whitelisting
 
 ### 🎨 User Experience
 - **Modern Dark Theme** - Beautiful purple gradient design with glassmorphism effects
+- **Mobile Responsive** - Card view on mobile, table view on desktop
 - **Smart Autocomplete** - Prevents duplicate students with case-insensitive name matching
-- **Inline Editing** - Edit test marks directly in the ranking table
-- **Responsive Design** - Seamlessly adapts to desktop, tablet, and mobile devices
-- **Loading States** - Clear feedback during API operations
-- **Error Handling** - User-friendly error messages and validation
+- **Inline Editing** - Edit test marks directly in the ranking table (teacher mode)
+- **Loading States** - Clear feedback during all API operations
+- **Error Handling** - User-friendly error messages and comprehensive validation
 
 ## 🛠️ Tech Stack
 
@@ -84,25 +86,33 @@ Edit `.env` with your configuration:
 
 ```env
 PORT=5000
-MONGO_URI=mongodb+srv://username:password@cluster.xxxxx.mongodb.net/occmerittrack?retryWrites=true&w=majority
+MONGO_URI=your_mongodb_connection_string_here
 JWT_SECRET=your_random_64_character_secret_key_here
 JWT_EXPIRE=30d
-TEACHER_PASSKEY=OCC2026
+TEACHER_PASSKEY=your_secure_passkey_here
 NODE_ENV=development
 ```
 
-**Getting MongoDB URI:**
-1. Create free account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Create new cluster (M0 free tier)
-3. Create database user with password
-4. Whitelist your IP (or use `0.0.0.0/0` for development)
-5. Click "Connect" → "Connect your application" → Copy connection string
-6. Replace `<password>` with your database password
+**Important Configuration Steps:**
 
-**Generating JWT Secret:**
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
+1. **MongoDB URI:** 
+   - Create free account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+   - Create new cluster (M0 free tier available)
+   - Create database user with strong password
+   - Configure network access (whitelist IP or 0.0.0.0/0 for development)
+   - Get connection string from "Connect" → "Connect your application"
+   - Replace `<password>` with your database password
+
+2. **JWT Secret:** Generate a secure random key:
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+   ```
+
+3. **Teacher Passkey:** Set your custom passkey for teacher authentication
+
+#### Seed Database (Optional)
+
+Add sample data for testing:
 
 ```bash
 npm run seed
@@ -154,8 +164,8 @@ npm run dev
 Open your browser and navigate to `http://localhost:5173`
 
 **Login Options:**
-- **Teacher:** Enter passkey `OCC2026` for full access
-- **Student:** No passkey needed for read-only access
+- **Teacher:** Enter your configured passkey from `TEACHER_PASSKEY` in `.env` for full access (add, edit, delete)
+- **Student:** No passkey needed for read-only access (view rankings only)
 
 ## 📁 Project Structure
 
@@ -272,7 +282,9 @@ Protected routes accessible
 
 ## 🧮 Ranking Algorithm
 
-The system uses a **weighted average formula** for accurate ranking across tests with different total marks:
+The system uses a **sophisticated multi-level ranking system** that ensures fair competition:
+
+### Weighted Average Formula
 
 ```
 Final Percentage = (Σ Obtained Marks / Σ Total Marks) × 100
@@ -291,7 +303,26 @@ Total Marks = 25 + 50 + 75 + 100 = 250
 Final Percentage = (242 / 250) × 100 = 96.8%
 ```
 
-This approach is **fairer** than simple averaging because it accounts for the weight of each test.
+This weighted approach is **fairer** than simple averaging because it properly accounts for the relative importance of each test.
+
+### Tie-Breaking Rules
+
+When students have the same percentage, the system applies sophisticated tie-breaking:
+
+1. **Primary:** Higher final percentage wins
+2. **Secondary:** If percentages match → Student with MORE tests taken ranks higher
+3. **Tertiary:** If percentage AND test count match → Student with HIGHER total marks ranks higher
+4. **True Tie:** Only if ALL three criteria match → Students share the same rank
+
+**Example Scenario:**
+- Student A: 80%, 5 tests, 200 total marks → **Rank 1**
+- Student B: 80%, 3 tests, 150 total marks → **Rank 2** (fewer tests)
+- Student C: 80%, 3 tests, 150 total marks → **Rank 2** (TRUE TIE - all criteria match)
+- Student D: 80%, 3 tests, 130 total marks → **Rank 4** (same percentage and tests, but lower marks)
+
+### Floating-Point Precision
+
+The system uses epsilon-based comparison (tolerance: 0.01) to handle floating-point arithmetic issues, ensuring students with percentages like 72.00 and 72.000001 are correctly identified as tied.
 
 ### Automatic Rank Updates
 
@@ -300,6 +331,10 @@ Ranks are recalculated automatically using Mongoose middleware hooks when:
 - ✅ New test is added to existing student
 - ✅ Test marks are edited
 - ✅ Student is deleted
+
+### Manual Recalculation
+
+Teachers can manually trigger rank recalculation using the green "Recalculate" button in the filter bar. This is useful after system updates or to ensure consistency.
 
 ## 📡 API Endpoints Reference
 
@@ -314,49 +349,70 @@ Ranks are recalculated automatically using Mongoose middleware hooks when:
 
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| GET | `/api/students` | Public | Get all students |
-| GET | `/api/students/:id` | Public | Get single student |
-| POST | `/api/students` | Teacher | Add student/test |
+| GET | `/api/students` | Public | Get all students with rankings |
+| GET | `/api/students/:id` | Public | Get single student by ID |
+| POST | `/api/students` | Teacher | Add new student or test |
 | PUT | `/api/students/:id` | Teacher | Update test marks |
 | DELETE | `/api/students/:id` | Teacher | Delete student |
+| POST | `/api/students/recalculate-ranks` | Teacher | Manually recalculate all ranks |
 
 **Detailed API documentation:** See [backend/README.md](backend/README.md)
 
 ## 🎯 Key Features Explained
 
-### 1. Case-Insensitive Name Matching
-- "John Doe", "john doe", "JOHN DOE" are treated as the same student
+### 1. Sophisticated Ranking System
+- **Multi-level tie-breaking:** Percentage → Test Count → Total Marks
+- **Epsilon comparison:** Handles floating-point precision (0.01 tolerance)
+- **Fair competition:** Only true equals share ranks
+- **Automatic updates:** Triggered by MongoDB post-save hooks
+- **Manual refresh:** Teacher-only recalculate button in filter bar
+
+### 2. Mobile Responsive Design
+- **Desktop:** Full table view with inline editing
+- **Mobile:** Beautiful card-based layout with expandable details
+- **Breakpoints:** Tailwind CSS responsive utilities (sm, md, lg)
+- **Touch-friendly:** Large buttons and tap targets for mobile users
+
+### 3. Case-Insensitive Name Matching
+- "John Doe", "john doe", "JOHN DOE" treated as same student
 - MongoDB index with collation strength 2
 - Prevents duplicate student entries
+- Real-time autocomplete suggestions
 
-### 2. Flexible Test Numbers
-- Each student can have independent test numbers (1, 2, 3...)
+### 4. Flexible Test Numbers
+- Each student can have independent test numbers
 - Multiple students can submit the same test number
 - A single student cannot submit the same test twice
+- Filter rankings by specific test number
 
-### 3. Smart Autocomplete
+### 5. Smart Autocomplete
 - Real-time name suggestions while typing
 - Shows existing students' test counts and percentages
 - Visual feedback for new vs. existing students
+- Prevents accidental duplicates
 
-### 4. Inline Editing
+### 6. Inline Editing (Teacher Mode)
 - Click on any test mark badge to edit
 - Validates obtained marks ≤ total marks
 - Loading states during save operations
+- Automatic rank recalculation after edit
 
-### 5. Performance Charts
+### 7. Performance Charts
 - Interactive line graph using Recharts
 - Shows test-by-test progress
 - Displays highest/lowest marks and statistics
+- Responsive modal with adaptive sizing
 
 ## 🔐 Security Features
 
-- **JWT Tokens** - Expire after 30 days
-- **Password Hashing** - bcryptjs for secure storage
-- **Input Validation** - Express-validator for request validation
-- **CORS Protection** - Configured for specific origins
-- **Environment Variables** - Sensitive data in .env (not committed)
-- **MongoDB Security** - IP whitelisting and user authentication
+- **JWT Tokens** - Configurable expiration (default: 30 days)
+- **Password Hashing** - bcryptjs for secure credential storage
+- **Input Validation** - Express-validator for comprehensive request validation
+- **CORS Protection** - Configured for specific allowed origins
+- **Environment Variables** - All sensitive data stored securely in `.env` files (not committed)
+- **MongoDB Security** - Network access controls and database user authentication
+- **Protected Routes** - Middleware-based authentication for teacher-only operations
+- **Token Storage** - Secure localStorage handling with automatic cleanup
 
 ## 🧪 Testing the API
 
@@ -366,7 +422,7 @@ Ranks are recalculated automatically using Mongoose middleware hooks when:
 ```bash
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"role":"teacher","passkey":"OCC2026"}'
+  -d '{"role":"teacher","passkey":"YOUR_PASSKEY_HERE"}'
 ```
 
 **Get All Students:**
@@ -374,11 +430,11 @@ curl -X POST http://localhost:5000/api/auth/login \
 curl http://localhost:5000/api/students
 ```
 
-**Add Student (replace YOUR_TOKEN):**
+**Add Student (requires teacher authentication):**
 ```bash
 curl -X POST http://localhost:5000/api/students \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
     "name": "Test Student",
     "testNumber": 1,
@@ -387,27 +443,46 @@ curl -X POST http://localhost:5000/api/students \
   }'
 ```
 
+**Recalculate All Ranks (teacher only):**
+```bash
+curl -X POST http://localhost:5000/api/students/recalculate-ranks \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
 ## 🚀 Deployment
 
-### Backend Deployment (Render - Free)
+### Backend Deployment Options
 
-1. Create account at [Render.com](https://render.com)
-2. New Web Service → Connect repository
-3. Configure:
+**Recommended Platforms:** Render, Railway, Heroku (Free tiers available)
+
+**General Setup:**
+1. Connect your GitHub repository
+2. Configure build and start commands:
    - **Build Command:** `cd backend && npm install`
    - **Start Command:** `cd backend && npm start`
-   - **Environment:** Add all variables from `.env`
-4. Deploy
+3. Add environment variables from your `.env` file
+4. Ensure MongoDB Atlas IP whitelist includes your hosting platform
 
-### Frontend Deployment (Vercel/Netlify - Free)
+### Frontend Deployment Options
 
-1. Update `.env`: `VITE_API_URL=https://your-backend-url.onrender.com/api`
-2. Deploy to Vercel or Netlify
-3. Configure build settings:
+**Recommended Platforms:** Vercel, Netlify (Free tiers available)
+
+**General Setup:**
+1. Update frontend `.env` with your deployed backend URL:
+   ```env
+   VITE_API_URL=https://your-backend-url.com/api
+   ```
+2. Configure build settings:
    - **Build Command:** `npm run build`
    - **Output Directory:** `dist`
+   - **Install Command:** `npm install`
+3. Deploy from GitHub repository
 
-**Alternative:** [Railway.app](https://railway.app), [Heroku](https://heroku.com)
+**Important:** Update CORS settings in backend to include your frontend domain
+
+**Deployment Documentation:**
+- See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed platform-specific instructions
+- Backend deployment guide: [backend/README.md](backend/README.md)
 
 ## 🐛 Troubleshooting
 
@@ -435,8 +510,9 @@ curl -X POST http://localhost:5000/api/students \
 
 **Authentication Not Working:**
 - Clear localStorage: `localStorage.clear()`
-- Verify passkey is `OCC2026`
-- Check network tab for API responses
+- Verify `TEACHER_PASSKEY` in backend `.env` matches what you're entering
+- Check network tab for API responses and error messages
+- Ensure backend server is running and accessible
 
 ## 📚 Learning Resources
 
@@ -470,4 +546,3 @@ Built with ❤️ for OCC HSC Performance Evaluation
 **🎉 Happy Coding!**
 
 For detailed backend documentation, see [backend/README.md](backend/README.md)
-# occMeritTrack

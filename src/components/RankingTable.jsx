@@ -103,7 +103,7 @@ const RankingTable = ({ candidates, onEditMark, onDeleteCandidate, onViewChart, 
             {/* Status Badge */}
             <div className="mb-2">
               <span className="inline-block px-2.5 py-1 bg-linear-to-r from-purple-600 to-pink-600 text-white text-xs font-semibold rounded-full shadow-md">
-                ✨ {getPerformanceStatus(candidate)}
+                {getPerformanceStatus(candidate)}
               </span>
             </div>
 
@@ -264,7 +264,7 @@ const RankingTable = ({ candidates, onEditMark, onDeleteCandidate, onViewChart, 
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <span className="px-3 py-1.5 bg-linear-to-r from-purple-600 to-pink-600 text-white text-xs font-semibold rounded-full shadow-md">
-                        ✨ {getPerformanceStatus(candidate)}
+                        {getPerformanceStatus(candidate)}
                       </span>
                       {!isReadOnly && (
                         <button

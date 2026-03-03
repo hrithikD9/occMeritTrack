@@ -36,8 +36,7 @@ const PerformanceChart = ({ candidate, onClose }) => {
                   Performance Chart
                 </h2>
               </div>
-              <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-gradient-to-r ${getNameBadgeColor(candidate.name).bg} ${getNameBadgeColor(candidate.name).text} font-semibold text-sm sm:text-base lg:text-lg shadow-md mb-2`}>
-                <span className="text-base sm:text-lg lg:text-xl">{getNameBadgeColor(candidate.name).icon}</span>
+              <div className={`inline-flex items-center px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-gradient-to-r ${getNameBadgeColor(candidate.name).bg} ${getNameBadgeColor(candidate.name).text} font-semibold text-sm sm:text-base lg:text-lg shadow-md mb-2`}>
                 <span className="break-words">{candidate.name}</span>
               </div>
               <p className="text-gray-300 mt-1 sm:mt-2 text-xs sm:text-sm">

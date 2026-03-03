@@ -92,8 +92,7 @@ const RankingTable = ({ candidates, onEditMark, onDeleteCandidate, onViewChart, 
 
             {/* Name */}
             <div className="mb-2">
-              <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-gradient-to-r ${getNameBadgeColor(candidate.name).bg} ${getNameBadgeColor(candidate.name).text} font-semibold text-xs sm:text-sm shadow-md max-w-full`}>
-                <span className="text-sm sm:text-base flex-shrink-0">{getNameBadgeColor(candidate.name).icon}</span>
+              <div className={`inline-flex items-center px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-gradient-to-r ${getNameBadgeColor(candidate.name).bg} ${getNameBadgeColor(candidate.name).text} font-semibold text-xs sm:text-sm shadow-md max-w-full`}>
                 <span className="break-words">{candidate.name}</span>
               </div>
               <div className="text-xs text-gray-400 mt-0.5">
@@ -254,8 +253,7 @@ const RankingTable = ({ candidates, onEditMark, onDeleteCandidate, onViewChart, 
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r ${getNameBadgeColor(candidate.name).bg} ${getNameBadgeColor(candidate.name).text} font-semibold text-sm lg:text-base shadow-md max-w-xs`}>
-                    <span className="text-base lg:text-lg flex-shrink-0">{getNameBadgeColor(candidate.name).icon}</span>
+                  <div className={`inline-flex items-center px-3 py-1.5 rounded-lg bg-gradient-to-r ${getNameBadgeColor(candidate.name).bg} ${getNameBadgeColor(candidate.name).text} font-semibold text-sm lg:text-base shadow-md max-w-xs`}>
                     <span className="break-words">{candidate.name}</span>
                   </div>
                   <div className="text-xs text-gray-400 mt-0.5">

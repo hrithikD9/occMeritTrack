@@ -19,8 +19,8 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   process.env.FRONTEND_URL,
-  'https://occmerittrack.vercel.app',
-  'https://occmerittrack-*.vercel.app', // Preview deployments
+  'https://occ-merit-track.vercel.app',
+  'https://occ-merit-track-*.vercel.app', // Preview deployments
 ].filter(Boolean);
 
 app.use(cors({

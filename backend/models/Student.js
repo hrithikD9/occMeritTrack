@@ -80,27 +80,73 @@ studentSchema.methods.calculateFinalPercentage = function() {
 };
 
 // Static method to recalculate all ranks
-// Students with the same finalPercentage get the same rank
+// Tie-breaking rules:
+// 1. Higher percentage wins
+// 2. If same percentage -> More tests taken wins
+// 3. If same percentage and test count -> Higher total marks wins
+// 4. Only if all three match -> They tie (same rank)
 studentSchema.statics.recalculateRanks = async function() {
   try {
-    // Get all students sorted by finalPercentage descending, then by name
-    const students = await this.find().sort({ finalPercentage: -1, name: 1 });
+    // Get all students
+    const students = await this.find();
+    
+    // Calculate additional data and sort
+    const studentsWithData = students.map(student => {
+      const totalMarksSum = student.tests.reduce((sum, test) => sum + test.totalMarks, 0);
+      return {
+        _id: student._id,
+        finalPercentage: student.finalPercentage,
+        testCount: student.tests.length,
+        totalMarksSum: totalMarksSum,
+        name: student.name
+      };
+    }).sort((a, b) => {
+      // Primary: Sort by percentage (descending)
+      if (b.finalPercentage !== a.finalPercentage) {
+        return b.finalPercentage - a.finalPercentage;
+      }
+      
+      // Secondary: Sort by number of tests taken (descending)
+      if (b.testCount !== a.testCount) {
+        return b.testCount - a.testCount;
+      }
+      
+      // Tertiary: Sort by total marks sum (descending)
+      if (b.totalMarksSum !== a.totalMarksSum) {
+        return b.totalMarksSum - a.totalMarksSum;
+      }
+      
+      // Quaternary: Sort by name (alphabetically) for consistency
+      return a.name.localeCompare(b.name);
+    });
 
     // Assign ranks with tie handling
     const bulkOps = [];
     let currentRank = 1;
     
-    students.forEach((student, index) => {
+    studentsWithData.forEach((student, index) => {
       let assignedRank;
       
-      // If this is not the first student and the percentage matches the previous one
-      if (index > 0 && students[index - 1].finalPercentage === student.finalPercentage) {
-        // Same rank as previous student
-        assignedRank = bulkOps[index - 1].updateOne.update.rank;
+      // Check if this student should tie with the previous one
+      // They tie only if percentage, test count, AND total marks all match
+      if (index > 0) {
+        const prev = studentsWithData[index - 1];
+        const shouldTie = 
+          prev.finalPercentage === student.finalPercentage &&
+          prev.testCount === student.testCount &&
+          prev.totalMarksSum === student.totalMarksSum;
+        
+        if (shouldTie) {
+          // Same rank as previous student
+          assignedRank = bulkOps[index - 1].updateOne.update.rank;
+        } else {
+          // New rank (could skip numbers if there were ties before)
+          currentRank = index + 1;
+          assignedRank = currentRank;
+        }
       } else {
-        // New rank (could skip numbers if there were ties before)
-        currentRank = index + 1;
-        assignedRank = currentRank;
+        // First student
+        assignedRank = 1;
       }
       
       bulkOps.push({

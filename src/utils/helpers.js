@@ -18,36 +18,74 @@ export const calculateAverage = (marks) => {
 };
 
 // Helper function to rank candidates based on final percentage
-// Students with the same percentage get the same rank
+// Tie-breaking rules:
+// 1. Higher percentage wins
+// 2. If same percentage -> More tests taken wins
+// 3. If same percentage and test count -> Higher total marks wins
+// 4. Only if all three match -> They tie (same rank)
 export const rankCandidates = (candidates) => {
-  // First, calculate percentages and sort
-  const candidatesWithPercentage = candidates
-    .map((candidate) => ({
-      ...candidate,
-      finalPercentage: parseFloat(calculateFinalPercentage(candidate.tests || [])),
-      // Keep old structure for backward compatibility
-      average: candidate.marks ? parseFloat(calculateAverage(candidate.marks)) : 0
-    }))
-    .sort((a, b) => b.finalPercentage - a.finalPercentage);
+  // First, calculate percentages and prepare data
+  const candidatesWithData = candidates
+    .map((candidate) => {
+      const tests = candidate.tests || [];
+      const totalMarksSum = tests.reduce((sum, test) => sum + test.totalMarks, 0);
+      
+      return {
+        ...candidate,
+        finalPercentage: parseFloat(calculateFinalPercentage(tests)),
+        testCount: tests.length,
+        totalMarksSum: totalMarksSum,
+        // Keep old structure for backward compatibility
+        average: candidate.marks ? parseFloat(calculateAverage(candidate.marks)) : 0
+      };
+    })
+    .sort((a, b) => {
+      // Primary: Sort by percentage (descending)
+      if (b.finalPercentage !== a.finalPercentage) {
+        return b.finalPercentage - a.finalPercentage;
+      }
+      
+      // Secondary: Sort by number of tests taken (descending)
+      if (b.testCount !== a.testCount) {
+        return b.testCount - a.testCount;
+      }
+      
+      // Tertiary: Sort by total marks sum (descending)
+      if (b.totalMarksSum !== a.totalMarksSum) {
+        return b.totalMarksSum - a.totalMarksSum;
+      }
+      
+      // If all match, they're truly equal (will get same rank)
+      return 0;
+    });
   
   // Assign ranks with tie handling
   let currentRank = 1;
-  return candidatesWithPercentage.map((candidate, index) => {
-    // If this is not the first candidate and the percentage matches the previous one
-    if (index > 0 && candidatesWithPercentage[index - 1].finalPercentage === candidate.finalPercentage) {
-      // Same rank as previous candidate
-      return {
-        ...candidate,
-        rank: candidatesWithPercentage[index - 1].rank
-      };
-    } else {
-      // New rank (could skip numbers if there were ties before)
-      currentRank = index + 1;
-      return {
-        ...candidate,
-        rank: currentRank
-      };
+  return candidatesWithData.map((candidate, index) => {
+    // Check if this candidate should tie with the previous one
+    // They tie only if percentage, test count, AND total marks all match
+    if (index > 0) {
+      const prev = candidatesWithData[index - 1];
+      const shouldTie = 
+        prev.finalPercentage === candidate.finalPercentage &&
+        prev.testCount === candidate.testCount &&
+        prev.totalMarksSum === candidate.totalMarksSum;
+      
+      if (shouldTie) {
+        // Same rank as previous candidate
+        return {
+          ...candidate,
+          rank: candidatesWithData[index - 1].rank
+        };
+      }
     }
+    
+    // New rank (could skip numbers if there were ties before)
+    currentRank = index + 1;
+    return {
+      ...candidate,
+      rank: currentRank
+    };
   });
 };
 

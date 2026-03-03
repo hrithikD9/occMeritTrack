@@ -9,12 +9,26 @@
 .env
 .env.*
 !.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
 *.pem
 *.key
 *.cert
 *.p12
 secrets/
 secret.*.js
+
+# ============================================
+# Personal Scripts & Tools
+# ============================================
+# Local shell scripts and batch files
+check-security.sh
+check-security.bat
+*.local.sh
+*.local.bat
+scripts/local/
+tools/local/
 
 # ============================================
 # Dependencies

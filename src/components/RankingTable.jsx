@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getRankColor, getPerformanceStatus } from '../utils/helpers';
+import { getRankColor, getPerformanceStatus, getNameBadgeColor } from '../utils/helpers';
 
 const RankingTable = ({ candidates, onEditMark, onDeleteCandidate, onViewChart, isReadOnly = false }) => {
   const [editingId, setEditingId] = useState(null);
@@ -74,35 +74,36 @@ const RankingTable = ({ candidates, onEditMark, onDeleteCandidate, onViewChart, 
             className={`${getRankColor(candidate.rank)} p-4`}
           >
             {/* Rank and Name */}
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold">
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xl sm:text-2xl font-bold">
                   #{candidate.rank}
                 </span>
                 {candidate.rank <= 3 && (
-                  <span className="text-2xl">
+                  <span className="text-xl sm:text-2xl">
                     {candidate.rank === 1 ? '🥇' : candidate.rank === 2 ? '🥈' : '🥉'}
                   </span>
                 )}
               </div>
-              <div className="text-lg font-bold text-purple-300">
+              <div className="text-base sm:text-lg font-bold text-purple-300">
                 {(candidate.finalPercentage || candidate.average).toFixed(2)}%
               </div>
             </div>
 
             {/* Name */}
-            <div className="mb-3">
-              <div className="text-base font-semibold text-white">
-                {candidate.name}
+            <div className="mb-2">
+              <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-gradient-to-r ${getNameBadgeColor(candidate.name).bg} ${getNameBadgeColor(candidate.name).text} font-semibold text-xs sm:text-sm shadow-md max-w-full`}>
+                <span className="text-sm sm:text-base flex-shrink-0">{getNameBadgeColor(candidate.name).icon}</span>
+                <span className="break-words">{candidate.name}</span>
               </div>
-              <div className="text-xs text-gray-400">
+              <div className="text-xs text-gray-400 mt-0.5">
                 {(candidate.tests || candidate.marks).length} test{(candidate.tests || candidate.marks).length !== 1 ? 's' : ''} taken
               </div>
             </div>
 
             {/* Status Badge */}
-            <div className="mb-3">
-              <span className="inline-block px-3 py-1.5 bg-linear-to-r from-purple-600 to-pink-600 text-white text-xs font-bold rounded-full shadow-lg">
+            <div className="mb-2">
+              <span className="inline-block px-2.5 py-1 bg-linear-to-r from-purple-600 to-pink-600 text-white text-xs font-semibold rounded-full shadow-md">
                 ✨ {getPerformanceStatus(candidate)}
               </span>
             </div>
@@ -242,28 +243,29 @@ const RankingTable = ({ candidates, onEditMark, onDeleteCandidate, onViewChart, 
               >
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
-                    <span className="text-3xl font-bold">
+                    <span className="text-2xl font-bold">
                       #{candidate.rank}
                     </span>
                     {candidate.rank <= 3 && (
-                      <span className="ml-3 text-3xl">
+                      <span className="ml-2 text-2xl">
                         {candidate.rank === 1 ? '🥇' : candidate.rank === 2 ? '🥈' : '🥉'}
                       </span>
                     )}
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-semibold text-white">
-                    {candidate.name}
+                <td className="px-6 py-4">
+                  <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r ${getNameBadgeColor(candidate.name).bg} ${getNameBadgeColor(candidate.name).text} font-semibold text-sm lg:text-base shadow-md max-w-xs`}>
+                    <span className="text-base lg:text-lg flex-shrink-0">{getNameBadgeColor(candidate.name).icon}</span>
+                    <span className="break-words">{candidate.name}</span>
                   </div>
-                  <div className="text-xs text-gray-400">
+                  <div className="text-xs text-gray-400 mt-0.5">
                     {(candidate.tests || candidate.marks).length} test{(candidate.tests || candidate.marks).length !== 1 ? 's' : ''} taken
                   </div>
                 </td>
                 <td className="px-6 py-4">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white text-sm font-bold rounded-full shadow-lg">
+                      <span className="px-3 py-1.5 bg-linear-to-r from-purple-600 to-pink-600 text-white text-xs font-semibold rounded-full shadow-md">
                         ✨ {getPerformanceStatus(candidate)}
                       </span>
                       {!isReadOnly && (
@@ -328,7 +330,7 @@ const RankingTable = ({ candidates, onEditMark, onDeleteCandidate, onViewChart, 
                               ) : (
                                 <div
                                   onClick={!isReadOnly ? () => handleEditClick(candidate.id, index, item) : undefined}
-                                  className={`px-3 py-2 rounded-xl text-sm font-medium transition-all ${
+                                  className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                                     isReadOnly 
                                       ? 'bg-purple-900/40 text-purple-300 cursor-default border border-purple-500/30'
                                       : 'bg-purple-600/50 hover:bg-purple-600 text-white cursor-pointer border border-purple-400/30'
@@ -346,7 +348,7 @@ const RankingTable = ({ candidates, onEditMark, onDeleteCandidate, onViewChart, 
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-lg font-bold text-purple-300">
+                  <div className="text-base font-bold text-purple-300">
                     {(candidate.finalPercentage || candidate.average).toFixed(2)}%
                   </div>
                 </td>
@@ -354,7 +356,7 @@ const RankingTable = ({ candidates, onEditMark, onDeleteCandidate, onViewChart, 
                   <div className="flex gap-2">
                     <button
                       onClick={() => onViewChart(candidate)}
-                      className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl transition-all duration-300 shadow-lg"
+                      className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded-lg transition-all duration-300 shadow-md text-sm"
                       title="View Performance Chart"
                     >
                       📈 Chart
@@ -375,7 +377,7 @@ const RankingTable = ({ candidates, onEditMark, onDeleteCandidate, onViewChart, 
                           }
                         }}
                         disabled={isDeleting}
-                        className="bg-red-600/80 hover:bg-red-600 text-white px-4 py-2 rounded-xl transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-red-600/80 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg transition-all duration-300 shadow-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Delete Candidate"
                       >
                         {isDeleting ? '⏳ Deleting...' : '🗑️ Delete'}

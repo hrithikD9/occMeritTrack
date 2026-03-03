@@ -1,5 +1,6 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { getNameBadgeColor } from '../utils/helpers';
 
 const PerformanceChart = ({ candidate, onClose }) => {
   if (!candidate) return null;
@@ -30,9 +31,15 @@ const PerformanceChart = ({ candidate, onClose }) => {
         <div className="p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 sm:mb-6">
             <div className="flex-1">
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-300">
-                Performance Chart - {candidate.name}
-              </h2>
+              <div className="flex items-center gap-2 mb-2">
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-300">
+                  Performance Chart
+                </h2>
+              </div>
+              <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-gradient-to-r ${getNameBadgeColor(candidate.name).bg} ${getNameBadgeColor(candidate.name).text} font-semibold text-sm sm:text-base lg:text-lg shadow-md mb-2`}>
+                <span className="text-base sm:text-lg lg:text-xl">{getNameBadgeColor(candidate.name).icon}</span>
+                <span className="break-words">{candidate.name}</span>
+              </div>
               <p className="text-gray-300 mt-1 sm:mt-2 text-xs sm:text-sm">
                 Rank: <span className="font-semibold text-purple-400">#{candidate.rank}</span> | 
                 Final %: <span className="font-semibold text-purple-400">{(candidate.finalPercentage || candidate.average).toFixed(2)}%</span> | 
@@ -41,7 +48,7 @@ const PerformanceChart = ({ candidate, onClose }) => {
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white text-2xl sm:text-3xl font-bold w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-lg sm:rounded-xl hover:bg-gray-700 transition-all self-end sm:self-auto"
+              className="text-gray-400 hover:text-white text-xl sm:text-2xl font-bold w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg hover:bg-gray-700 transition-all self-end sm:self-auto"
             >
               ×
             </button>

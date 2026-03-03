@@ -2,9 +2,9 @@ import React from 'react';
 
 const FilterBar = ({ testNumbers, selectedTest, onTestChange, onExport, onClearFilter, onRecalculateRanks, userRole }) => {
   return (
-    <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-4 sm:p-5 mb-4 sm:mb-6 border border-purple-500/20">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+    <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl shadow-2xl p-3 sm:p-4 mb-4 border border-purple-500/20">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
           <label className="text-xs sm:text-sm font-medium text-purple-200">
             Filter by Test:
           </label>
@@ -12,7 +12,7 @@ const FilterBar = ({ testNumbers, selectedTest, onTestChange, onExport, onClearF
             <select
               value={selectedTest || ''}
               onChange={(e) => onTestChange(e.target.value ? parseInt(e.target.value) : null)}
-              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-900/50 border border-purple-500/30 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white text-sm"
+              className="flex-1 sm:flex-none px-3 py-2 bg-gray-900/50 border border-purple-500/30 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white text-sm"
             >
               <option value="">All Tests</option>
               {testNumbers.map((testNum) => (
@@ -38,11 +38,11 @@ const FilterBar = ({ testNumbers, selectedTest, onTestChange, onExport, onClearF
           {userRole === 'teacher' && (
             <button
               onClick={onRecalculateRanks}
-              className="bg-green-600 hover:bg-green-500 text-white font-semibold py-2 sm:py-2.5 px-3 sm:px-5 rounded-lg sm:rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm"
+              className="bg-green-600 hover:bg-green-500 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-md text-sm"
               title="Recalculate all student ranks"
             >
               <svg 
-                className="w-4 h-4 sm:w-5 sm:h-5" 
+                className="w-4 h-4" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -61,10 +61,10 @@ const FilterBar = ({ testNumbers, selectedTest, onTestChange, onExport, onClearF
           {/* Export Button */}
           <button
             onClick={onExport}
-            className="bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2 sm:py-2.5 px-4 sm:px-6 rounded-lg sm:rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm"
+            className="bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-md text-sm"
           >
             <svg 
-              className="w-4 h-4 sm:w-5 sm:h-5" 
+              className="w-4 h-4" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { getNameBadgeColor } from '../utils/helpers';
 
 const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
   const [name, setName] = useState('');
@@ -196,14 +197,14 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
             onFocus={() => name.trim().length > 0 && setShowDropdown(true)}
             placeholder="Start typing student name..."
             autoComplete="off"
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-900/50 border border-purple-500/30 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 text-sm sm:text-base"
+            className="w-full px-3 py-2 bg-gray-900/50 border border-purple-500/30 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 text-sm"
           />
           
           {/* Autocomplete Dropdown */}
           {showDropdown && (
             <div
               ref={dropdownRef}
-              className="absolute z-10 w-full mt-2 bg-gray-800 border border-purple-500/30 rounded-xl shadow-2xl max-h-60 overflow-y-auto"
+              className="absolute z-10 w-full mt-2 bg-gray-800 border border-purple-500/30 rounded-lg shadow-2xl max-h-60 overflow-y-auto"
             >
               {/* Existing student suggestions */}
               {filteredSuggestions.length > 0 && (
@@ -218,16 +219,17 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
                       className="px-4 py-3 hover:bg-purple-900/40 cursor-pointer border-b border-gray-700/50 transition-colors"
                     >
                       <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-medium text-white">
-                            {candidate.name}
+                        <div className="flex-1 min-w-0">
+                          <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-gradient-to-r ${getNameBadgeColor(candidate.name).bg} ${getNameBadgeColor(candidate.name).text} font-semibold text-xs sm:text-sm shadow-md mb-1 max-w-full`}>
+                            <span className="text-sm sm:text-base flex-shrink-0">{getNameBadgeColor(candidate.name).icon}</span>
+                            <span className="break-words truncate">{candidate.name}</span>
                           </div>
                           <div className="text-xs text-gray-400">
                             {candidate.tests.length} test{candidate.tests.length !== 1 ? 's' : ''} • 
                             Final: {candidate.finalPercentage ? candidate.finalPercentage.toFixed(2) : '0.00'}%
                           </div>
                         </div>
-                        <span className="text-purple-400 text-sm">Select</span>
+                        <span className="text-purple-400 text-sm ml-2">Select</span>
                       </div>
                     </div>
                   ))}
@@ -240,7 +242,7 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
                   <button
                     type="button"
                     onClick={handleAddNewStudent}
-                    className="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg"
+                    className="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-md text-sm"
                   >
                     <span>➕</span>
                     <span>Add New Student: "{name.trim()}"</span>
@@ -272,7 +274,7 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
             placeholder="Enter test number (e.g., 1, 2, 3...)"
             min="1"
             step="1"
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-900/50 border border-purple-500/30 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 text-sm sm:text-base"
+            className="w-full px-3 py-2 bg-gray-900/50 border border-purple-500/30 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 text-sm"
           />
           {testNumber && name.trim() && (() => {
             const currentStudent = findExactMatch(name);
@@ -317,7 +319,7 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
             placeholder="Enter total marks (e.g., 25, 50, 100)"
             min="1"
             step="0.01"
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-900/50 border border-purple-500/30 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 text-sm sm:text-base"
+            className="w-full px-3 py-2 bg-gray-900/50 border border-purple-500/30 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 text-sm"
           />
         </div>
 
@@ -332,20 +334,20 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
             placeholder="Enter obtained marks"
             min="0"
             step="0.01"
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-900/50 border border-purple-500/30 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 text-sm sm:text-base"
+            className="w-full px-3 py-2 bg-gray-900/50 border border-purple-500/30 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 text-sm"
           />
         </div>
         
         {totalMarks && obtainedMarks && !isNaN(totalMarks) && !isNaN(obtainedMarks) && parseFloat(totalMarks) > 0 && (
-          <div className="bg-purple-900/30 border border-purple-500/30 rounded-xl p-2 sm:p-3">
-            <p className="text-xs sm:text-sm text-purple-200">
+          <div className="bg-purple-900/30 border border-purple-500/30 rounded-lg p-2">
+            <p className="text-xs text-purple-200">
               📊 <strong className="text-purple-300">Percentage:</strong> {((parseFloat(obtainedMarks) / parseFloat(totalMarks)) * 100).toFixed(2)}%
             </p>
           </div>
         )}
         
         {error && (
-          <div className="bg-red-900/40 border border-red-500/50 text-red-200 px-3 sm:px-4 py-2 sm:py-3 rounded-xl backdrop-blur-sm text-xs sm:text-sm">
+          <div className="bg-red-900/40 border border-red-500/50 text-red-200 px-3 py-2 rounded-lg backdrop-blur-sm text-xs">
             {error}
           </div>
         )}
@@ -353,7 +355,7 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2.5 sm:py-3 px-4 rounded-xl transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+          className="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-sm"
         >
           {isSubmitting 
             ? '⏳ Saving...' 
@@ -362,8 +364,8 @@ const AddCandidate = ({ onAddCandidate, existingCandidates = [] }) => {
         </button>
       </form>
       
-      <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-purple-900/30 rounded-xl border border-purple-500/20">
-        <p className="text-xs sm:text-sm text-purple-200">
+      <div className="mt-3 p-3 bg-purple-900/30 rounded-lg border border-purple-500/20">
+        <p className="text-xs text-purple-200">
           💡 <strong className="text-purple-300">Tip:</strong> Each student can have their own Test 1, 2, 3, etc. Multiple students can submit results for the same test number. A student cannot submit the same test twice.
         </p>
       </div>

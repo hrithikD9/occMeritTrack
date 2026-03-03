@@ -17,6 +17,32 @@ export const calculateAverage = (marks) => {
   return (sum / marks.length).toFixed(2);
 };
 
+// Helper function to generate consistent color for student name badge
+export const getNameBadgeColor = (name) => {
+  // Generate hash from name
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  
+  // Define beautiful gradient colors similar to the "Needs Support" badge
+  const colors = [
+    { bg: 'from-purple-600 to-purple-700', text: 'text-white', icon: '👤' },
+    { bg: 'from-blue-600 to-blue-700', text: 'text-white', icon: '🎓' },
+    { bg: 'from-green-600 to-green-700', text: 'text-white', icon: '✨' },
+    { bg: 'from-pink-600 to-pink-700', text: 'text-white', icon: '💫' },
+    { bg: 'from-indigo-600 to-indigo-700', text: 'text-white', icon: '⭐' },
+    { bg: 'from-teal-600 to-teal-700', text: 'text-white', icon: '🌟' },
+    { bg: 'from-rose-600 to-rose-700', text: 'text-white', icon: '🎯' },
+    { bg: 'from-cyan-600 to-cyan-700', text: 'text-white', icon: '🏆' },
+    { bg: 'from-amber-600 to-amber-700', text: 'text-white', icon: '📚' },
+    { bg: 'from-emerald-600 to-emerald-700', text: 'text-white', icon: '🎪' },
+  ];
+  
+  const index = Math.abs(hash) % colors.length;
+  return colors[index];
+};
+
 // Helper function to rank candidates based on final percentage
 // Tie-breaking rules:
 // 1. Higher percentage wins

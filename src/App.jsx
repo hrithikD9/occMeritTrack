@@ -292,16 +292,16 @@ function App() {
     <div className="min-h-screen bg-linear-to-br from-gray-900 via-purple-900 to-gray-900">
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Header */}
-        <header className="text-center mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4 sm:mb-6">
+        <header className="text-center mb-5 sm:mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
             <div className="hidden sm:block sm:flex-1"></div>
             <div className="flex-1 flex justify-center">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-400">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-400">
                 🎓 OCC MeritTrack
               </h1>
             </div>
-            <div className="flex sm:flex-1 justify-center sm:justify-end gap-2 sm:gap-3">
-              <div className={`px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold shadow-lg backdrop-blur-sm ${
+            <div className="flex sm:flex-1 justify-center sm:justify-end gap-2">
+              <div className={`px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md backdrop-blur-sm ${
                 userRole === 'teacher' 
                   ? 'bg-purple-600/90 text-white border border-purple-400/30' 
                   : 'bg-emerald-600/90 text-white border border-emerald-400/30'
@@ -311,7 +311,7 @@ function App() {
               </div>
               <button
                 onClick={handleLogout}
-                className="px-3 sm:px-5 py-2 sm:py-2.5 bg-red-600/90 hover:bg-red-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 shadow-lg backdrop-blur-sm border border-red-400/30"
+                className="px-3 py-1.5 bg-red-600/90 hover:bg-red-500 text-white rounded-lg text-xs font-semibold transition-all duration-300 shadow-md backdrop-blur-sm border border-red-400/30"
                 title="Logout"
               >
                 <span className="hidden sm:inline">🚪 Logout</span>

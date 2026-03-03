@@ -41,7 +41,7 @@ PORT=5000
 MONGO_URI=your_mongodb_atlas_connection_string
 JWT_SECRET=your_random_jwt_secret_key
 JWT_EXPIRE=30d
-TEACHER_PASSKEY=OCC2026
+TEACHER_PASSKEY=your_secure_passkey_here
 NODE_ENV=development
 ```
 
@@ -55,9 +55,9 @@ NODE_ENV=development
 6. Replace `<password>` with your database user password
 7. Replace `myFirstDatabase` with your database name (e.g., `occmerittrack`)
 
-Example:
+Example format:
 ```
-mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/occmerittrack?retryWrites=true&w=majority
+mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/yourdatabase?retryWrites=true&w=majority
 ```
 
 #### Generating JWT Secret:
@@ -78,7 +78,7 @@ npm run dev
 npm start
 ```
 
-**Seed the database with sample data (70 students):**
+**Seed the database with sample data (optional for testing):**
 ```bash
 npm run seed
 ```
@@ -112,7 +112,7 @@ Login as teacher or student
 ```json
 {
   "role": "teacher",
-  "passkey": "OCC2026"
+  "passkey": "your_passkey_here"
 }
 ```
 
@@ -160,11 +160,11 @@ Get all students (public access)
 ```json
 {
   "success": true,
-  "count": 70,
+  "count": 10,
   "data": [
     {
       "_id": "507f1f77bcf86cd799439011",
-      "name": "Aisha Rahman",
+      "name": "John Doe",
       "tests": [
         {
           "testNumber": 1,
@@ -190,7 +190,7 @@ Get single student by ID (public access)
   "success": true,
   "data": {
     "_id": "507f1f77bcf86cd799439011",
-    "name": "Aisha Rahman",
+    "name": "John Doe",
     "tests": [...],
     "finalPercentage": 96.8,
     "rank": 1
@@ -282,9 +282,33 @@ Authorization: Bearer <token>
 }
 ```
 
+#### POST /api/students/recalculate-ranks
+Manually recalculate all student ranks (Teacher only)
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Ranks recalculated successfully",
+  "count": 70,
+  "data": [
+    ...array of all students with updated ranks
+  ]
+}
+```
+
+**Note:** This endpoint applies the multi-level tie-breaking algorithm to all students. Useful after system updates or to ensure consistency.
+
 ---
 
 ## 🧮 Ranking Algorithm
+
+### Weighted Percentage Calculation
 
 The system uses a **weighted percentage formula** to calculate final percentage:
 
@@ -300,21 +324,42 @@ Final Percentage = (Σ Obtained Marks / Σ Total Marks) × 100
 
 Final Percentage = (24+48+73+97) / (25+50+75+100) × 100 = **96.8%**
 
-Ranks are automatically recalculated whenever:
-- A new student is added
-- Test marks are updated
-- A student is deleted
+### Multi-Level Tie-Breaking System
+
+When students have identical percentages, the system applies sophisticated tie-breaking:
+
+1. **Primary:** Higher final percentage wins
+2. **Secondary:** If percentages match → More tests taken ranks higher
+3. **Tertiary:** If percentage AND test count match → Higher total marks ranks higher  
+4. **True Tie:** Only if all three criteria match → Students share the same rank
+
+**Epsilon Comparison:** Uses 0.01 tolerance for floating-point precision
+
+### Automatic Recalculation
+
+Ranks are automatically recalculated using Mongoose post-save hooks whenever:
+- ✅ A new student is added
+- ✅ Test marks are updated
+- ✅ A student is deleted
+
+### Manual Recalculation
+
+Teachers can manually trigger rank recalculation via:
+```
+POST /api/students/recalculate-ranks
+```
 
 ## 🔒 Authentication & Authorization
 
 ### Teacher Access
-- Requires passkey: `OCC2026`
-- Gets JWT token valid for 30 days
-- Can add, edit, and delete students
+- Requires configured passkey (set in `TEACHER_PASSKEY` environment variable)
+- Gets JWT token with configurable expiration (default: 30 days)
+- Full CRUD access: add, edit, and delete students
+- Can manually recalculate all rankings
 
 ### Student Access
 - No authentication required
-- Read-only access
+- Read-only access only
 - Can view rankings, charts, and export data
 
 ## 📁 Project Structure
@@ -351,7 +396,7 @@ backend/
 ```bash
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"role":"teacher","passkey":"OCC2026"}'
+  -d '{"role":"teacher","passkey":"YOUR_PASSKEY"}'
 ```
 
 **Get all students:**
@@ -380,28 +425,19 @@ curl -X POST http://localhost:5000/api/students \
 
 ## 🚀 Deployment
 
-### Option 1: Render (Recommended - Free)
+### General Deployment Steps
 
-1. Create account at [Render.com](https://render.com)
-2. New Web Service → Connect GitHub repo
-3. Build Command: `cd backend && npm install`
-4. Start Command: `cd backend && npm start`
-5. Add environment variables in Render dashboard
-6. Deploy
+**Supported Platforms:** Render, Railway, Heroku, or any Node.js hosting service
 
-### Option 2: Railway (Free)
+1. Connect your GitHub repository to the platform
+2. Configure build settings:
+   - **Build Command:** `cd backend && npm install`
+   - **Start Command:** `cd backend && npm start`
+3. Add all environment variables from your `.env` file
+4. Ensure MongoDB Atlas whitelist includes your hosting platform's IPs
+5. Deploy and test the API endpoints
 
-1. Create account at [Railway.app](https://railway.app)
-2. New Project → Deploy from GitHub
-3. Add environment variables
-4. Deploy
-
-### Option 3: Heroku
-
-1. Install Heroku CLI
-2. Create Heroku app: `heroku create occmerittrack-api`
-3. Set environment variables: `heroku config:set MONGO_URI=...`
-4. Deploy: `git push heroku main`
+**Important:** Always use HTTPS in production and update CORS settings to match your frontend domain.
 
 ## 🐛 Troubleshooting
 
@@ -431,16 +467,19 @@ curl -X POST http://localhost:5000/api/students \
 | MONGO_URI | MongoDB connection string | mongodb+srv://... |
 | JWT_SECRET | Secret key for JWT signing | 64-char random string |
 | JWT_EXPIRE | Token expiration duration | 30d |
-| TEACHER_PASSKEY | Teacher authentication passkey | OCC2026 |
+| TEACHER_PASSKEY | Teacher authentication passkey | your_secure_passkey |
 | NODE_ENV | Environment mode | development/production |
 
-## 🔐 Security Notes
+## 🔐 Security Best Practices
 
-- Never commit `.env` file (already in .gitignore)
-- Use strong JWT_SECRET in production (32+ characters)
-- Enable MongoDB IP whitelisting in production
-- Use HTTPS in production
-- Change TEACHER_PASSKEY for production
+- ✅ Never commit `.env` file (already in .gitignore)
+- ✅ Use strong JWT_SECRET (minimum 64 characters, randomly generated)
+- ✅ Use strong TEACHER_PASSKEY (avoid dictionary words or simple patterns)
+- ✅ Enable MongoDB Atlas IP whitelisting in production
+- ✅ Always use HTTPS in production environments
+- ✅ Configure CORS to allow only your frontend domain
+- ✅ Regularly rotate JWT secrets and passkeys
+- ✅ Monitor API logs for suspicious authentication attempts
 
 ## 📄 License
 

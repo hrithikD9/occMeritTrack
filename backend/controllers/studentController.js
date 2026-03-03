@@ -249,10 +249,38 @@ const deleteStudent = async (req, res) => {
   }
 };
 
+// @desc    Manually recalculate ranks for all students
+// @route   POST /api/students/recalculate-ranks
+// @access  Private (Teacher only)
+const recalculateRanks = async (req, res) => {
+  try {
+    await Student.recalculateRanks();
+    
+    const students = await Student.find()
+      .sort({ rank: 1 })
+      .select('-__v');
+
+    res.status(200).json({
+      success: true,
+      message: 'Ranks recalculated successfully',
+      count: students.length,
+      data: students
+    });
+  } catch (error) {
+    console.error('Recalculate ranks error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error recalculating ranks',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   getAllStudents,
   getStudentById,
   addStudent,
   updateStudent,
-  deleteStudent
+  deleteStudent,
+  recalculateRanks
 };

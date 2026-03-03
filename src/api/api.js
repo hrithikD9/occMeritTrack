@@ -124,6 +124,14 @@ export const studentAPI = {
     });
     return response;
   },
+
+  // Manually recalculate all student ranks (Teacher only)
+  recalculateRanks: async () => {
+    const response = await apiRequest('/students/recalculate-ranks', {
+      method: 'POST',
+    });
+    return response.data;
+  },
 };
 
 export default {

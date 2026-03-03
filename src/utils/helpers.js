@@ -59,34 +59,48 @@ export const rankCandidates = (candidates) => {
       return 0;
     });
   
-  // Assign ranks with tie handling
+  // Assign ranks with tie handling - TWO PASS APPROACH
+  // First pass: assign ranks
+  const rankedCandidates = [];
   let currentRank = 1;
-  return candidatesWithData.map((candidate, index) => {
+  let previousRank = 1;
+  
+  candidatesWithData.forEach((candidate, index) => {
+    let assignedRank;
+    
     // Check if this candidate should tie with the previous one
-    // They tie only if percentage, test count, AND total marks all match
     if (index > 0) {
       const prev = candidatesWithData[index - 1];
-      const shouldTie = 
-        prev.finalPercentage === candidate.finalPercentage &&
-        prev.testCount === candidate.testCount &&
-        prev.totalMarksSum === candidate.totalMarksSum;
+      
+      // Use small epsilon for floating point comparison
+      const percentageMatch = Math.abs(prev.finalPercentage - candidate.finalPercentage) < 0.01;
+      const testCountMatch = prev.testCount === candidate.testCount;
+      const totalMarksMatch = prev.totalMarksSum === candidate.totalMarksSum;
+      
+      const shouldTie = percentageMatch && testCountMatch && totalMarksMatch;
       
       if (shouldTie) {
         // Same rank as previous candidate
-        return {
-          ...candidate,
-          rank: candidatesWithData[index - 1].rank
-        };
+        assignedRank = previousRank;
+      } else {
+        // New rank (skip numbers if there were ties before)
+        currentRank = index + 1;
+        assignedRank = currentRank;
+        previousRank = currentRank;
       }
+    } else {
+      // First candidate
+      assignedRank = 1;
+      previousRank = 1;
     }
     
-    // New rank (could skip numbers if there were ties before)
-    currentRank = index + 1;
-    return {
+    rankedCandidates.push({
       ...candidate,
-      rank: currentRank
-    };
+      rank: assignedRank
+    });
   });
+  
+  return rankedCandidates;
 };
 
 // Helper function to determine performance status

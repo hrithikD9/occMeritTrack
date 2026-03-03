@@ -201,6 +201,26 @@ function App() {
     exportToCSV(candidates);
   };
 
+  // Manually recalculate all ranks (Teacher only)
+  const handleRecalculateRanks = async () => {
+    if (userRole !== 'teacher') {
+      alert('Only teachers can recalculate ranks!');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const recalculatedStudents = await studentAPI.recalculateRanks();
+      setCandidates(recalculatedStudents);
+      alert('✅ Ranks recalculated successfully!');
+    } catch (error) {
+      console.error('Recalculate ranks error:', error);
+      alert(`❌ Error recalculating ranks: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Get filtered and ranked candidates
   const getDisplayCandidates = () => {
     let filtered = [...candidates];
@@ -370,6 +390,8 @@ function App() {
                 onTestChange={setSelectedTest}
                 onExport={handleExport}
                 onClearFilter={() => setSelectedTest(null)}
+                onRecalculateRanks={handleRecalculateRanks}
+                userRole={userRole}
               />
             )}
 

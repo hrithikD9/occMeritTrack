@@ -131,10 +131,13 @@ studentSchema.statics.recalculateRanks = async function() {
       // They tie only if percentage, test count, AND total marks all match
       if (index > 0) {
         const prev = studentsWithData[index - 1];
-        const shouldTie = 
-          prev.finalPercentage === student.finalPercentage &&
-          prev.testCount === student.testCount &&
-          prev.totalMarksSum === student.totalMarksSum;
+        
+        // Use small epsilon for floating point comparison
+        const percentageMatch = Math.abs(prev.finalPercentage - student.finalPercentage) < 0.01;
+        const testCountMatch = prev.testCount === student.testCount;
+        const totalMarksMatch = prev.totalMarksSum === student.totalMarksSum;
+        
+        const shouldTie = percentageMatch && testCountMatch && totalMarksMatch;
         
         if (shouldTie) {
           // Same rank as previous student

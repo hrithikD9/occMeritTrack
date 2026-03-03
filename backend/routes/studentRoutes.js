@@ -6,7 +6,8 @@ const {
   getStudentById,
   addStudent,
   updateStudent,
-  deleteStudent
+  deleteStudent,
+  recalculateRanks
 } = require('../controllers/studentController');
 const { protect, teacherOnly } = require('../middleware/auth');
 
@@ -31,6 +32,10 @@ const addStudentValidation = [
 
 // Public routes (accessible to everyone)
 router.get('/', getAllStudents);
+
+// Utility route to manually recalculate all ranks (must come before /:id)
+router.post('/recalculate-ranks', protect, teacherOnly, recalculateRanks);
+
 router.get('/:id', getStudentById);
 
 // Protected routes (teacher only)

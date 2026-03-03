@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FilterBar = ({ testNumbers, selectedTest, onTestChange, onExport, onClearFilter }) => {
+const FilterBar = ({ testNumbers, selectedTest, onTestChange, onExport, onClearFilter, onRecalculateRanks, userRole }) => {
   return (
     <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-4 sm:p-5 mb-4 sm:mb-6 border border-purple-500/20">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
@@ -33,26 +33,53 @@ const FilterBar = ({ testNumbers, selectedTest, onTestChange, onExport, onClearF
           </div>
         </div>
 
-        <button
-          onClick={onExport}
-          className="bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2 sm:py-2.5 px-4 sm:px-6 rounded-lg sm:rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm"
-        >
-          <svg 
-            className="w-4 h-4 sm:w-5 sm:h-5" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Recalculate Ranks Button (Teacher only) */}
+          {userRole === 'teacher' && (
+            <button
+              onClick={onRecalculateRanks}
+              className="bg-green-600 hover:bg-green-500 text-white font-semibold py-2 sm:py-2.5 px-3 sm:px-5 rounded-lg sm:rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm"
+              title="Recalculate all student ranks"
+            >
+              <svg 
+                className="w-4 h-4 sm:w-5 sm:h-5" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
+                />
+              </svg>
+              <span className="hidden lg:inline">Recalculate</span>
+            </button>
+          )}
+
+          {/* Export Button */}
+          <button
+            onClick={onExport}
+            className="bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2 sm:py-2.5 px-4 sm:px-6 rounded-lg sm:rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm"
           >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
-            />
-          </svg>
-          <span className="hidden sm:inline">Export to CSV</span>
-          <span className="sm:hidden">Export</span>
-        </button>
+            <svg 
+              className="w-4 h-4 sm:w-5 sm:h-5" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
+              />
+            </svg>
+            <span className="hidden sm:inline">Export to CSV</span>
+            <span className="sm:hidden">Export</span>
+          </button>
+        </div>
       </div>
     </div>
   );

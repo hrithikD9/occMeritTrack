@@ -31,6 +31,17 @@ scripts/local/
 tools/local/
 
 # ============================================
+# Personal Documentation & Notes
+# ============================================
+# Internal documentation not for public repos
+DEPLOYMENT.md
+GITHUB_CHECKLIST.md
+SECURITY.md
+deployment/
+notes/
+docs/internal/
+
+# ============================================
 # Dependencies
 # ============================================
 node_modules/

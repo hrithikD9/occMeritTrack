@@ -537,10 +537,6 @@ Contributions are welcome! Please follow these steps:
 
 This project is open source and available under the MIT License.
 
-## 👨‍💻 Author
-
-Built with ❤️ for OCC HSC Performance Evaluation
-
 ---
 
 **🎉 Happy Coding!**

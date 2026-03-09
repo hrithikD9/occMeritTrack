@@ -46,9 +46,9 @@ export const getNameBadgeColor = (name) => {
 // Helper function to rank candidates based on final percentage
 // Tie-breaking rules:
 // 1. Higher percentage wins
-// 2. If same percentage -> More tests taken wins
-// 3. If same percentage and test count -> Higher total marks wins
-// 4. Only if all three match -> They tie (same rank)
+// 2. If same percentage -> Higher total marks wins
+// 3. Only if both match -> They tie (same rank)
+// Note: Missed exams should be recorded as 0 marks, not excluded from test count
 export const rankCandidates = (candidates) => {
   // First, calculate percentages and prepare data
   const candidatesWithData = candidates
@@ -71,17 +71,12 @@ export const rankCandidates = (candidates) => {
         return b.finalPercentage - a.finalPercentage;
       }
       
-      // Secondary: Sort by number of tests taken (descending)
-      if (b.testCount !== a.testCount) {
-        return b.testCount - a.testCount;
-      }
-      
-      // Tertiary: Sort by total marks sum (descending)
+      // Secondary: Sort by total marks sum (descending)
       if (b.totalMarksSum !== a.totalMarksSum) {
         return b.totalMarksSum - a.totalMarksSum;
       }
       
-      // If all match, they're truly equal (will get same rank)
+      // If both match, they're truly equal (will get same rank)
       return 0;
     });
   
@@ -100,10 +95,9 @@ export const rankCandidates = (candidates) => {
       
       // Use small epsilon for floating point comparison
       const percentageMatch = Math.abs(prev.finalPercentage - candidate.finalPercentage) < 0.01;
-      const testCountMatch = prev.testCount === candidate.testCount;
       const totalMarksMatch = prev.totalMarksSum === candidate.totalMarksSum;
       
-      const shouldTie = percentageMatch && testCountMatch && totalMarksMatch;
+      const shouldTie = percentageMatch && totalMarksMatch;
       
       if (shouldTie) {
         // Same rank as previous candidate
